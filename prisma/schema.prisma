@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  HQ_MANAGER
+  BRANCH_MANAGER
+  CHEF
+  CASHIER
+  WAITER
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  SERVED
+  PAID
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  APP
+}
+
+model Branch {
+  id         Int         @id @default(autoincrement())
+  name       String
+  city       String
+  address    String
+  phone      String
+  isActive   Boolean     @default(true)
+  users      User[]
+  menuItems  MenuItem[]
+  tables     TableSeat[]
+  orders     Order[]
+  inventory  Inventory[]
+  promotions Promotion[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(WAITER)
+  isActive  Boolean   @default(true)
+  branch    Branch?   @relation(fields: [branchId], references: [id])
+  branchId  Int?
+  orders    Order[]   @relation("WaiterOrders")
+  payments  Payment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model MenuItem {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  category    String
+  price       Decimal     @db.Decimal(10, 2)
+  available   Boolean     @default(true)
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  branchId    Int
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model TableSeat {
+  id          Int      @id @default(autoincrement())
+  tableNumber Int
+  capacity    Int
+  status      String   @default("EMPTY")
+  branch      Branch   @relation(fields: [branchId], references: [id])
+  branchId    Int
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal     @default(0) @db.Decimal(10, 2)
+  notes       String?
+  table       TableSeat   @relation(fields: [tableId], references: [id])
+  tableId     Int
+  waiter      User        @relation("WaiterOrders", fields: [waiterId], references: [id])
+  waiterId    Int
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  branchId    Int
+  items       OrderItem[]
+  payment     Payment?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId    Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  menuItemId Int
+}
+
+model Payment {
+  id        Int           @id @default(autoincrement())
+  amount    Decimal       @db.Decimal(10, 2)
+  method    PaymentMethod @default(CASH)
+  paidAt    DateTime      @default(now())
+  order     Order         @relation(fields: [orderId], references: [id])
+  orderId   Int           @unique
+  cashier   User          @relation(fields: [cashierId], references: [id])
+  cashierId Int
+}
+
+model Promotion {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  description String
+  discountPct Decimal  @db.Decimal(5, 2)
+  isActive    Boolean  @default(true)
+  branch      Branch?  @relation(fields: [branchId], references: [id])
+  branchId    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inventory {
+  id           Int      @id @default(autoincrement())
+  itemName     String
+  quantity     Int
+  unit         String
+  reorderLevel Int
+  branch       Branch   @relation(fields: [branchId], references: [id])
+  branchId     Int
+  updatedAt    DateTime @updatedAt
+}
