@@ -51,3 +51,27 @@ export async function seedTables(): Promise<void> {
   }
   console.log('[Seeder] Tables seeded for all branches.');
 }
+export async function seedMenuItems(): Promise<void> {
+  const count = await prisma.menuItem.count();
+  if (count > 0) { console.log('[Seeder] Menu items already seeded.'); return; }
+  const branches = await prisma.branch.findMany();
+  for (const branch of branches) {
+    await prisma.menuItem.createMany({
+      data: [
+        { name: 'Wagyu Ribeye', description: 'Premium wagyu beef, 300g', category: 'Mains', price: 45.00, available: true, branchId: branch.id },
+        { name: 'Classic Sirloin', description: '250g sirloin steak', category: 'Mains', price: 32.00, available: true, branchId: branch.id },
+        { name: 'Lamb Chops', description: 'Grilled lamb chops with mint', category: 'Mains', price: 28.00, available: true, branchId: branch.id },
+        { name: 'Caesar Salad', description: 'Romaine, croutons, parmesan', category: 'Starters', price: 12.00, available: true, branchId: branch.id },
+        { name: 'Garlic Bread', description: 'Toasted with garlic butter', category: 'Starters', price: 6.00, available: true, branchId: branch.id },
+        { name: 'Soup of the Day', description: 'Ask your waiter', category: 'Starters', price: 8.00, available: true, branchId: branch.id },
+        { name: 'Truffle Fries', description: 'Fries with truffle oil', category: 'Sides', price: 8.00, available: true, branchId: branch.id },
+        { name: 'Onion Rings', description: 'Crispy battered rings', category: 'Sides', price: 6.00, available: true, branchId: branch.id },
+        { name: 'Cheesecake', description: 'New York style cheesecake', category: 'Desserts', price: 9.00, available: true, branchId: branch.id },
+        { name: 'Chocolate Fondant', description: 'Warm chocolate fondant', category: 'Desserts', price: 10.00, available: true, branchId: branch.id },
+        { name: 'Coca Cola', description: '330ml', category: 'Drinks', price: 3.50, available: true, branchId: branch.id },
+        { name: 'Fresh Lemonade', description: 'Homemade lemonade', category: 'Drinks', price: 4.50, available: true, branchId: branch.id },
+      ]
+    });
+  }
+  console.log('[Seeder] Menu items seeded for all branches.');
+}

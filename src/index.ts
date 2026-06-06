@@ -10,7 +10,7 @@ import chefRoutes from './routes/chefRoutes.js';
 import cashierRoutes from './routes/cashierRoutes.js';
 import waiterRoutes from './routes/waiterRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
-import { seedAdmin, seedBranches, seedTables } from './lib/seed.js';
+import { seedAdmin, seedBranches, seedTables, seedMenuItems } from './lib/seed.js';
 
 const app = express();
 const port = process.env['PORT'] || 3001;
@@ -32,5 +32,6 @@ app.listen(port, async () => {
   await seedAdmin();
   await seedBranches();
   await seedTables();
+  await seedMenuItems();
   console.log(`Steakz backend running on http://localhost:${port}`);
 });
