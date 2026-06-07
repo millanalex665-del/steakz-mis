@@ -14,6 +14,8 @@ enum Role {
   CHEF
   CASHIER
   WAITER
+  CUSTOMER
+  DELIVERY
 }
 
 enum OrderStatus {

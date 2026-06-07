@@ -58,5 +58,9 @@ router.patch('/users/:id/activate', async (req: Request, res: Response) => {
   await prisma.user.update({ where: { id }, data: { isActive: true } });
   res.json({ message: 'Account activated.' });
 });
-
+router.delete('/users/:id', async (req: Request, res: Response) => {
+  const id = parseInt(req.params['id'] ?? '0');
+  await prisma.user.delete({ where: { id } });
+  res.json({ message: 'User deleted.' });
+});
 export default router;

@@ -10,6 +10,8 @@ import chefRoutes from './routes/chefRoutes.js';
 import cashierRoutes from './routes/cashierRoutes.js';
 import waiterRoutes from './routes/waiterRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
+import deliveryRoutes from './routes/deliveryRoutes.js';
 import { seedAdmin, seedBranches, seedTables, seedMenuItems } from './lib/seed.js';
 
 const app = express();
@@ -27,6 +29,8 @@ app.use('/api/chef', chefRoutes);
 app.use('/api/cashier', cashierRoutes);
 app.use('/api/waiter', waiterRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api/customer', customerRoutes);
+app.use('/api/delivery', deliveryRoutes);
 
 app.listen(port, async () => {
   await seedAdmin();
