@@ -2,10 +2,7 @@
   "name": "steakz-backend",
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "nodemon --exec tsx src/index.ts",
-    "start": "node dist/index.js"
-  },
+  "scripts": { "dev": "nodemon --exec tsx src/index.ts", "build": "tsc", "start": "node dist/index.js" },
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
