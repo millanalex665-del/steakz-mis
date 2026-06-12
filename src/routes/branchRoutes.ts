@@ -15,7 +15,8 @@ router.get('/dashboard', async (req: Request, res: Response) => {
   });
   const revenue = orders.filter(o => o.status === 'PAID').reduce((s, o) => s + Number(o.payment?.amount ?? 0), 0);
   const staffCount = await prisma.user.count({ where: { branchId, isActive: true } });
-  res.json({ branchId, todayOrders: orders.length, todayRevenue: revenue, activeStaff: staffCount });
+  const branch = await prisma.branch.findUnique({ where: { id: branchId } });
+res.json({ branchId, branchName: branch?.name ?? '', todayOrders: orders.length, todayRevenue: revenue, activeStaff: staffCount });
 });
 
 router.get('/orders', async (req: Request, res: Response) => {
