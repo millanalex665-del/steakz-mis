@@ -55,5 +55,11 @@ router.get('/menu/popularity', async (_req: Request, res: Response) => {
   }));
   res.json(enriched);
 });
-
+router.get('/staff', verifyToken, requireRole(['HQ_MANAGER']), async (_req: Request, res: Response) => {
+  const staff = await prisma.user.findMany({
+    where: { role: { notIn: ['ADMIN', 'CUSTOMER'] } },
+    select: { id: true, name: true, email: true, role: true, isActive: true, branchId: true, branch: { select: { name: true } } }
+  });
+  res.json(staff);
+});
 export default router;
